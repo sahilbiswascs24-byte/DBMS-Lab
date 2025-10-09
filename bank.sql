@@ -1,7 +1,8 @@
 show databases;
 create database IF NOT
-exists bank_database;
-use bank_database;
+exists Bank_Database;
+show databases;
+use Bank_Database;
 
 create table Branch (branchname varchar(30), 
 branchcity varchar(30), assests real, primary key(branchname));
@@ -42,3 +43,52 @@ insert into BankAccount values
 (10, 'SBI_ResidencyRoad', 5000), (11, 'SBI_Jantarmantar', 2000);
 commit;
 select * from BankAccount;
+
+insert into BankCustomer values
+('Avinaash', 'VV Road', 'Bangalore'),
+('Dinesh', 'Bull Temple Road', 'Bangalore'),
+('Nikil', 'Churchgate Street', 'Bombay'),
+('Ravi', 'Karol Bagh', 'Delhi'),
+('Avinash', 'Jantarmantar Road', 'Delhi');
+select * from BankCustomer;
+
+insert into Depositer values ('Avinaash', 1), ('Dinesh', 2), ('Nikil', 3), ('Ravi', 4), ('Avinash', 8), ('Nikil', 9),
+('Dinesh', 10), ('Nikil', 11);
+select * from Depositer;
+
+SELECT 
+    D.customername,
+    B.branchname,
+    COUNT(D.accno) AS total_accounts
+FROM Depositer D
+JOIN BankAccount B 
+    ON D.accno = B.accno
+GROUP BY D.customername, B.branchname
+HAVING COUNT(D.accno) >= 2;
+
+
+SELECT 
+    D.customername
+FROM 
+    Depositer D
+    JOIN BankAccount A ON D.accno = A.accno
+    JOIN Branch B ON A.branchname = B.branchname
+WHERE 
+    B.branchcity = 'Delhi'
+GROUP BY 
+    D.customername
+HAVING 
+    COUNT(DISTINCT B.branchname) = (
+        SELECT COUNT(*) 
+        FROM Branch 
+        WHERE branchcity = 'Delhi'
+    );
+
+
+DELETE A
+FROM BankAccount A
+JOIN Branch B ON A.branchname = B.branchname
+WHERE B.branchcity = 'Bombay';
+SELECT * FROM BankAccount;
+
+
